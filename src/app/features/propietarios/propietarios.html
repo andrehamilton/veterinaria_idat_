@@ -1,0 +1,85 @@
+<div class="container py-4">
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-success text-white">
+      <h2 class="h5 mb-0">Registro de propietarios</h2>
+    </div>
+
+    <div class="card-body">
+      <div *ngIf="mensaje" class="alert alert-success">
+        {{ mensaje }}
+      </div>
+
+      <div *ngIf="error" class="alert alert-danger">
+        {{ error }}
+      </div>
+
+      <form [formGroup]="propietarioForm" (ngSubmit)="guardarPropietario()">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label for="dni" class="form-label">DNI (8 dígitos)</label>
+            <input
+              id="dni"
+              class="form-control"
+              maxlength="8"
+              inputmode="numeric"
+              formControlName="dni"
+            >
+          </div>
+
+          <div class="col-md-4">
+            <label for="nombre" class="form-label">Nombre completo</label>
+            <input id="nombre" class="form-control" formControlName="nombre">
+          </div>
+
+          <div class="col-md-4">
+            <label for="telefono" class="form-label">Teléfono (9 dígitos)</label>
+            <input
+              id="telefono"
+              class="form-control"
+              maxlength="9"
+              inputmode="numeric"
+              formControlName="telefono"
+            >
+          </div>
+        </div>
+
+        <button class="btn btn-success mt-3" type="submit">
+          Registrar propietario
+        </button>
+      </form>
+
+      <div class="table-responsive mt-4">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>DNI</th>
+              <th>Nombre</th>
+              <th>Teléfono</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let p of propietarios">
+              <td>{{ p.dni }}</td>
+              <td>{{ p.nombre }}</td>
+              <td>{{ p.telefono }}</td>
+              <td>
+                <button
+                  class="btn btn-outline-danger btn-sm"
+                  (click)="eliminarPropietario(p.dni)"
+                >
+                  Eliminar
+                </button>
+              </td>
+            </tr>
+
+            <tr *ngIf="!propietarios.length">
+              <td colspan="4">Registra primero un propietario.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

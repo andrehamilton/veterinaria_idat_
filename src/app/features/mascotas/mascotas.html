@@ -1,0 +1,174 @@
+<div class="container py-4">
+  <div
+    *ngIf="!propietarios.length"
+    class="alert alert-info"
+  >
+    Primero registra un propietario en la sección Propietarios.
+  </div>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-success text-white">
+      <h2 class="h5 mb-0">
+        {{ idEditando !== null ? 'Editar mascota' : 'Registrar mascota' }}
+      </h2>
+    </div>
+
+    <div class="card-body">
+      <div *ngIf="mensaje" class="alert alert-success">
+        {{ mensaje }}
+      </div>
+
+      <div *ngIf="error" class="alert alert-danger">
+        {{ error }}
+      </div>
+
+      <form [formGroup]="formulario" (ngSubmit)="guardarMascota()">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="nombre" class="form-label">Nombre de mascota</label>
+            <input id="nombre" class="form-control" formControlName="nombre">
+          </div>
+
+          <div class="col-md-6">
+            <label for="especie" class="form-label">Especie</label>
+            <select id="especie" class="form-select" formControlName="especie">
+              <option value="">Seleccionar</option>
+              <option *ngFor="let e of especies.concat('Otro')" [value]="e">
+                {{ e }}
+              </option>
+            </select>
+          </div>
+
+          <div
+            *ngIf="formulario.controls.especie.value === 'Otro'"
+            class="col-md-6"
+          >
+            <label for="otraEspecie" class="form-label">Especificar especie</label>
+            <input
+              id="otraEspecie"
+              class="form-control"
+              formControlName="otraEspecie"
+              placeholder="Ej. Tortuga, hámster o iguana"
+              required
+              pattern=".*\S.*"
+            >
+            <div
+              *ngIf="formulario.controls.otraEspecie.touched && formulario.controls.otraEspecie.invalid"
+              class="text-danger small"
+            >
+              Especifica la especie de la mascota.
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label for="raza" class="form-label">Raza</label>
+            <input id="raza" class="form-control" formControlName="raza">
+          </div>
+
+          <div class="col-md-6">
+            <label for="fechaNacimiento" class="form-label">Fecha de nacimiento</label>
+            <input
+              id="fechaNacimiento"
+              class="form-control"
+              type="date"
+              [max]="hoy"
+              formControlName="fechaNacimiento"
+            >
+          </div>
+
+          <div class="col-md-6">
+            <label for="peso" class="form-label">Peso (kg)</label>
+            <input
+              id="peso"
+              class="form-control"
+              type="number"
+              min="0.01"
+              step="0.01"
+              formControlName="peso"
+            >
+          </div>
+
+          <div class="col-md-6">
+            <label for="propietarioDni" class="form-label">Propietario (DNI y nombre)</label>
+            <select id="propietarioDni" class="form-select" formControlName="propietarioDni">
+              <option value="">Seleccionar propietario</option>
+              <option *ngFor="let p of propietarios" [value]="p.dni">
+                {{ p.dni }} - {{ p.nombre }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <button
+          class="btn btn-success mt-3"
+          type="submit"
+          [disabled]="!propietarios.length"
+        >
+          {{ idEditando !== null ? 'Guardar cambios' : 'Registrar mascota' }}
+        </button>
+
+        <button
+          *ngIf="idEditando !== null"
+          class="btn btn-secondary ms-2 mt-3"
+          type="button"
+          (click)="cancelarEdicion()"
+        >
+          Cancelar
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-header bg-dark text-white">
+      <h2 class="h5 mb-0">Mascotas registradas</h2>
+    </div>
+
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Especie</th>
+              <th>Raza</th>
+              <th>Nacimiento</th>
+              <th>Edad (años)</th>
+              <th>Peso (kg)</th>
+              <th>DNI</th>
+              <th>Propietario</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let m of mascotas">
+              <td>{{ m.nombre }}</td>
+              <td>{{ m.especie }}</td>
+              <td>{{ m.raza }}</td>
+              <td>{{ m.fechaNacimiento }}</td>
+              <td>{{ edad(m.fechaNacimiento) }}</td>
+              <td>{{ m.peso }}</td>
+              <td>{{ m.propietarioDni }}</td>
+              <td>{{ nombrePropietario(m.propietarioDni) }}</td>
+              <td>
+                <div class="d-flex gap-2">
+                  <button class="btn btn-warning btn-sm" (click)="editarMascota(m)">
+                    Editar
+                  </button>
+                  <button class="btn btn-danger btn-sm" (click)="eliminarMascota(m.id)">
+                    Eliminar
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <tr *ngIf="!mascotas.length">
+              <td colspan="9">No hay mascotas registradas.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
